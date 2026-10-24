@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { experimental_AstroContainer as AstroContainer } from 'astro/container';
+
+const entries = (await getCollection('timeline')).sort((a, b) => a.data.date.localeCompare(b.data.date));
+
+const toDate = (s: string) => {
+  const [year, month, day] = s.split('-').map(Number);
+  return { year, ...(month && { month }), ...(day && { day }) };
+};
+
+const container = await AstroContainer.create();
+const toSlide = async (e: (typeof entries)[number]) => {
+  const { Content } = await render(e);
+  const text = (await container.renderToString(Content)).trim();
+  return {
+    unique_id: e.id,
+    start_date: toDate(e.data.date),
+    ...(e.data.end && { end_date: toDate(e.data.end) }),
+    text: { headline: e.data.headline, text },
+    ...(e.data.media && { media: { url: e.data.media, ...(e.data.caption && { caption: e.data.caption }) } }),
+  };
+};
+
+const cover = entries.find((e) => e.data.cover);
+const data = {
+  ...(cover && { title: await toSlide(cover) }),
+  events: await Promise.all(entries.filter((e) => e !== cover).map(toSlide)),
+};
+---
+<Base wide>
+  <link slot="head" rel="stylesheet" href="/vendor/timeline/css/timeline.css" />
+  <h1 class="sr-only">Frank Traylor</h1>
+  <div id="timeline" class="timeline-frame"></div>
+  <noscript>
+    <ol class="timeline-fallback">
+      {entries.map((e) => <li><strong>{e.data.date.slice(0, 4)}</strong> {e.data.headline}</li>)}
+    </ol>
+  </noscript>
+  <script is:inline src="/vendor/timeline/js/timeline.js"></script>
+  <script is:inline define:vars={{ data }}>
+    window.timeline = new TL.Timeline('timeline', data, {
+      initial_zoom: 2,
+      hash_bookmark: false,
+      script_path: new URL('/vendor/timeline/js/', location.href).href,
+    });
+  </script>
+</Base>
+
+<style>
+  .timeline-frame { height: 650px; max-height: 80vh; min-height: 480px; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .timeline-fallback { line-height: 2; }
+</style>

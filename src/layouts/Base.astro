@@ -1,0 +1,128 @@
+---
+interface Props { title?: string; description?: string; wide?: boolean }
+const { title, description = 'Background, bio, and meaningless minutiae about Frank Traylor, tech CEO and entrepreneur.', wide = false } = Astro.props;
+const fullTitle = title ? `${title} | Frank Traylor` : 'Frank Traylor';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const nav = [
+  { label: 'Home', href: '/' },
+  { label: 'Foundations', href: '/foundations' },
+  { label: 'Frank IV', href: 'https://frankforever.ski', external: true },
+  { label: 'Work', href: '/work' },
+];
+const social = [
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/franktraylor', d: 'M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.06c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4z' },
+  { label: 'Instagram', href: 'https://instagram.com/franktraylor', d: 'M12 7.3a4.7 4.7 0 1 0 0 9.4 4.7 4.7 0 0 0 0-9.4zm0 7.7a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm6-7.9a1.1 1.1 0 1 1-2.2 0 1.1 1.1 0 0 1 2.2 0zM12 4.2c2.5 0 2.8 0 3.8.06 2.6.12 3.8 1.35 3.9 3.9.05 1 .06 1.3.06 3.84s0 2.8-.06 3.8c-.12 2.56-1.32 3.8-3.9 3.9-1 .05-1.3.06-3.8.06s-2.8 0-3.8-.06c-2.6-.12-3.8-1.35-3.9-3.9-.05-1-.06-1.3-.06-3.8s0-2.8.06-3.84c.12-2.56 1.32-3.8 3.9-3.9 1-.05 1.3-.06 3.8-.06zM12 2.5c-2.6 0-2.9 0-3.9.06-3.5.16-5.4 2.1-5.6 5.6C2.5 9.1 2.5 9.4 2.5 12s0 2.9.06 3.9c.16 3.5 2.1 5.4 5.6 5.6 1 .05 1.3.06 3.9.06s2.9 0 3.9-.06c3.5-.16 5.4-2.1 5.6-5.6.05-1 .06-1.3.06-3.9s0-2.9-.06-3.9c-.16-3.5-2.1-5.4-5.6-5.6-1-.05-1.3-.06-3.9-.06z' },
+  { label: 'YouTube', href: 'https://www.youtube.com/channel/UCnqRZytk8tXKaekRE-KTPzA', d: 'M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3z' },
+  { label: 'Vimeo', href: 'https://vimeo.com/ftraylor', d: 'M21.9 7.4c-.1 1.9-1.4 4.6-4 8-2.7 3.5-5 5.3-6.9 5.3-1.2 0-2.2-1.1-3-3.3L6.4 11.6c-.6-2.2-1.2-3.3-1.9-3.3-.1 0-.7.3-1.6 1L2 8c1-.9 2-1.8 3-2.7 1.4-1.2 2.4-1.8 3.1-1.9 1.6-.2 2.6.9 3 3.3.4 2.6.7 4.2.9 4.8.5 2.1 1 3.2 1.5 3.2.4 0 1.1-.7 2-2.1.9-1.4 1.4-2.5 1.4-3.2.1-1.2-.4-1.8-1.4-1.8-.5 0-1 .1-1.5.3 1-3.3 2.9-4.9 5.7-4.8 2.1.1 3.1 1.4 3 4.3z' },
+  { label: 'Facebook', href: 'https://www.facebook.com/1325495334', d: 'M13.5 21v-8h2.7l.4-3.2h-3.1V7.8c0-.9.25-1.5 1.55-1.5h1.65V3.4a22 22 0 0 0-2.4-.1c-2.4 0-4 1.45-4 4.1v2.4H7.6V13h2.7v8z' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL('/media/banner.jpg', Astro.site)} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&family=PT+Serif:ital@0;1&display=swap" />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="banner">
+      <a class="site-title" href="/">Frank Traylor</a>
+      <nav aria-label="Main">
+        <ul>
+          {nav.map((n) => (
+            <li>
+              <a href={n.href} aria-current={!n.external && path === n.href ? 'page' : undefined}>{n.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+    <main class:list={['content', { wide }]}>
+      <slot />
+    </main>
+    <footer>
+      <ul class="social">
+        {social.map((s) => (
+          <li><a href={s.href} aria-label={s.label} title={s.label}><svg viewBox="0 0 24 24" aria-hidden="true"><path d={s.d} /></svg></a></li>
+        ))}
+      </ul>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  /* Look carried over from the Squarespace site: lake panorama banner, stencil title,
+     slash-separated small-caps nav, quiet white page, letterspaced light headings. */
+  :root {
+    --bg: #ffffff;
+    --fg: #23262a;
+    --muted: #6b7178;
+    --rule: #e3e5e8;
+    --accent: #3d6b8c;
+    --banner-ink: #ffffff;
+    --font-title: 'Allerta Stencil', 'Arial Narrow', sans-serif;
+    --font-sans: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    --font-serif: 'PT Serif', Georgia, serif;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1rem/1.7 var(--font-sans); }
+  a { color: var(--accent); }
+  img { max-width: 100%; }
+
+  .banner {
+    background: #2d3540 url('/media/banner.jpg') center 38% / cover no-repeat;
+    min-height: clamp(150px, 15vw, 210px);
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+    padding-top: clamp(1.75rem, 4vw, 3.25rem);
+    text-align: center;
+  }
+  .site-title {
+    font-family: var(--font-title); font-size: clamp(1.6rem, 3.2vw, 2.1rem); letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--banner-ink); text-decoration: none; text-shadow: 0 1px 8px rgba(0,0,0,.35); padding-inline: 16px;
+  }
+  .site-title:hover { color: #d9dde1; }
+  .banner nav { width: 100%; background: rgba(20, 24, 28, 0.42); margin-top: 1.25rem; }
+  .banner nav ul { list-style: none; margin: 0 auto; padding-block: 0.3rem; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-wrap: wrap; justify-content: center; }
+  .banner nav li + li::before { content: '/'; color: rgba(255,255,255,.55); margin: 0 0.55rem; }
+  .banner nav a {
+    color: rgba(255,255,255,.78); text-decoration: none; text-transform: uppercase;
+    font-size: 0.78rem; letter-spacing: 0.12em;
+  }
+  .banner nav a:hover, .banner nav a[aria-current='page'] { color: #fff; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .banner a:focus-visible { outline-color: #fff; }
+
+  .content {
+    max-width: 46rem; margin: 0 auto;
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .content.wide { max-width: 80rem; }
+  h1, h2 { font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; text-wrap: balance; line-height: 1.3; }
+  h1 { font-size: 1.6rem; margin: 0 0 2rem; }
+  h2 { font-size: 1.25rem; margin: 3.5rem 0 1.5rem; }
+  h2:first-child { margin-top: 0; }
+  h3 { font-weight: 600; font-size: 1.05rem; margin: 2rem 0 0.75rem; }
+
+  footer { border-top: 1px solid var(--rule); padding-block: 1.75rem 2.5rem; }
+  .social { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: 0.9rem; }
+  .social a { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 4px; background: var(--fg); }
+  .social a:hover { background: var(--accent); }
+  .social svg { width: 1rem; height: 1rem; fill: var(--bg); }
+</style>
