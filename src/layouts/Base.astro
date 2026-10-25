@@ -45,6 +45,24 @@ const nav = [
     <main class:list={['content', { wide }]}>
       <slot />
     </main>
+
+    <a href="#top" class="to-top" aria-label="Back to top" hidden>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </a>
+    <script>
+      // Back to top: appears once the page has been scrolled well down
+      const toTop = document.querySelector<HTMLAnchorElement>('.to-top')!;
+      const onScroll = () => { toTop.hidden = window.scrollY < window.innerHeight * 1.2; };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      toTop.addEventListener('click', (e) => {
+        e.preventDefault();
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+        history.replaceState(null, '', location.pathname);
+        document.querySelector<HTMLElement>('.site-title')?.focus({ preventScroll: true });
+      });
+    </script>
   </body>
 </html>
 
@@ -105,5 +123,21 @@ const nav = [
   h2 { font-size: 1.25rem; margin: 3.5rem 0 1.5rem; }
   h2:first-child { margin-top: 0; }
   h3 { font-weight: 600; font-size: 1.05rem; margin: 2rem 0 0.75rem; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  .to-top {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right, 0px));
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    width: 2.9rem; height: 2.9rem; border-radius: 50%;
+    background: var(--fg); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+    z-index: 15;
+  }
+  .to-top[hidden] { display: none; }
+  .to-top:hover { background: var(--accent); }
 
 </style>

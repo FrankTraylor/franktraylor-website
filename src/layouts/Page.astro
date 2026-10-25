@@ -1,14 +1,32 @@
 ---
 import Base from './Base.astro';
-const { frontmatter } = Astro.props;
+const { frontmatter, headings = [] } = Astro.props;
+// Pages with `jump:` in their front matter get a row of buttons to each section.
+// `jump` can be `true` (use the headings as written) or a list of short labels, one per section.
+const sections = (headings as { depth: number; slug: string; text: string }[]).filter((h) => h.depth === 2);
+const labels: string[] | undefined = Array.isArray(frontmatter.jump) ? frontmatter.jump : undefined;
 ---
 <Base title={frontmatter.title} description={frontmatter.description}>
+  {frontmatter.jump && sections.length > 1 && (
+    <nav class="jump" aria-label="Jump to section">
+      {sections.map((h, i) => <a href={`#${h.slug}`}>{labels?.[i] ?? h.text}</a>)}
+    </nav>
+  )}
   <article class="prose">
     <slot />
   </article>
 </Base>
 
 <style is:global>
+  .jump { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 2.75rem; }
+  .jump a {
+    font-weight: 600; font-size: 0.88rem; line-height: 1.3; text-decoration: none;
+    padding: 0.45rem 1rem; border-radius: 999px;
+    border: 1px solid var(--rule); background: var(--bg); color: var(--fg);
+  }
+  .jump a:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .prose h2 { scroll-margin-top: 1.5rem; }
+
   .prose > ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.1rem; }
   .prose > ul li { line-height: 1.45; color: var(--muted); font-size: 0.92rem; }
   .prose > ul li strong { display: block; color: var(--fg); font-size: 1.05rem; font-weight: 600; }

@@ -1,6 +1,7 @@
 ---
 layout: ../layouts/Page.astro
 title: Foundations
+jump: [Core Attributes, Quotations, Progress, Wedding Vows]
 ---
 
 ## Core Attributes
